@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création article{% endblock %}
+{% set currentPage = "Nouveau article" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <h3 class="col-sm-8 panel-title"> Ajout d'un nouvel article</h3>
+                                <a href="{{ path('octave_index') }}" class="col-sm-4 btn btn-sm btn-flat border-slate text-slate text-bold">
+                                    <i class="icon-undo2"></i> Revenir à l'accueil des articles
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            {% include 'octave/_form.html.twig' %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

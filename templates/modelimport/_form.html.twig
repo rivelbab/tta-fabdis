@@ -1,0 +1,32 @@
+{{ form_start(form, {'attr': {'class':'text-bold text-primary'}}) }}
+    <div class="form-group">
+        <label><span class="text-bold">
+            <i class="icon-primitive-square"></i> &nbsp;
+            Nom du model d'import </span>
+        </label>
+        {{ form_widget(form.name, {'attr': {'class':'form-control','required':'required'}}) }}
+    </div>
+    <div class="form-group">
+        <label>
+            <i class="icon-primitive-square"></i> &nbsp;
+            <span class="text-bold"> Nom des colonnes du tarif <small class="text-warning">(séparé par une virgule)</small> </span>
+        </label>
+        <div class="input-group">
+            <span class="input-group-addon"></span>
+            {{ form_widget(form.fileHeader, {'attr': {'class':'form-control input-xs'}}) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>
+            <i class="icon-primitive-square"></i> &nbsp;
+            <span class="text-bold"> Correspondance TTA <small class="text-warning">(Tapez la première lettre puis choisissez parmis les propositions)</small> </span>
+        </label>
+        <div class="input-group">
+            <span class="input-group-addon"></span>
+            {{ form_widget(form.fields, {'attr': {'class':'form-control tokenfield'}}) }}
+        </div>
+    </div>
+    <div class="form-group pull-right">
+        <input type="submit" class="btn btn-primary" value="{{ btn_label|default('Enregistrer le model') }}">
+    </div>
+{{ form_end(form) }}

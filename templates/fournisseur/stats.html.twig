@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivie des majs{% endblock %}
+{% set currentPage = "Statistiques" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"> Suivie des mises à jours</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table classicDatatableNoBtn">
+                            <thead>
+                                <tr>
+                                    <th>Fournisseur</th>
+                                    <th>Progression</th>
+                                    <th>Total</th>
+                                    <th>Matchs</th>
+                                    <th>Mismatchs</th>
+                                    <th>Couverture</th>
+                                    <th>Date dernière MAJ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for fournisseur in fournisseurs %}
+                                <tr>
+                                    <td class="text-bold">{{ fournisseur.code }}</td>
+                                    <td>
+                                        {% if fournisseur.maj == 1 %}
+                                            <div class="progress progress-rounded">
+                                                <div class="progress-bar bg-teal" style="width:{{ fournisseur.percent|number_format(2, '.' , ',') }}%">
+                                                    <span> {{fournisseur.percent|number_format(1, '.' , ',')}} % </span>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {% if fournisseur.total > 0 %}
+                                                <button type="button" class="btn btn-default" id="spinner-light-5">
+                                                    <i class="icon-spinner6 spinner position-left"></i> En cours
+                                                </button>
+                                            {% endif %}
+                                            {% if fournisseur.total == 0 %}
+                                                <div class="progress col-sm-12">
+                                                    <div class="progress-bar bg-danger" style="width:100%">
+                                                        <span> 0% Fait </span>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-bold">{{ fournisseur.total }}</td>
+                                    <td class="text-bold text-success">{{ fournisseur.matchs }}</td>
+                                    <td class="text-bold text-danger">
+                                        <a href="{{ path('octave_mismatchs', {'fournisseurId':fournisseur.id }) }}"><span class="col-sm-6">{{ fournisseur.mismatchs }}</span></a>
+                                    </td>
+                                    <td class="text-bold text-warning">
+                                        {{ fournisseur.total }} &nbsp; <span class="text-bold"> / </span> &nbsp; {{ fournisseur.totalTarif }}
+                                    </td>
+                                    <td>{{ fournisseur.updatedAt is not null ? fournisseur.updatedAt|date("d/m/Y") : ''}}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

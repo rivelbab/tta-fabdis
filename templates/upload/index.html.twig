@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import articles{% endblock %}
+{% set currentPage = "Import articles" %}
+{% set error_flag = form_errors(form.tarifFile) %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-sm-7">
+                    <div class="panel panel-primary panel-bordered">
+                        <div class="panel-heading text-center">
+                            <h4 class="panel-title">Import d'article dans TTA</h4>
+                        </div>
+                        <div class="panel-body">
+                            {% if error_flag %}
+                                <h6 class="alert alert-danger alert-block text-center">Le type de fichier est invalide, Seul les fichiers excel sont autorisés </h6>
+                                <br>
+                            {% endif %}
+                            {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                                <div class="form-group">
+                                    <label class="text-bold"><i class="icon-primitive-square"></i> Fichier à importer</label>
+                                    {{ form_widget(form.tarifFile) }}
+                                </div>
+                                <div class="form-group">
+                                    <label class="text-bold" ><i class="icon-primitive-square"></i> Fournisseur concerné </label>
+                                    {{ form_widget(form.fournisseur, {'attr':{'class':'form-control input-xlg border-primary','data-width':'100%'}}) }}
+                                </div><hr>
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+                                        {{ form_widget(form.isMedia, {'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                    <div class="col-sm-11">
+                                        <h6 class="text-slate text-bold"> Cochez cette case pour importer l'onglet Media du fabdis </h6>
+                                        <hr>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary"><i class="icon-upload4"></i> Lancer l'import</button>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                    <div class="panel panel-warning panel-bordered">
+                        <div class="panel-heading text-bold text-center">
+                            <h4 panel-title>Attention.......<i class="icon-alert"></i> &nbsp;&nbsp; Avant d'importer, assurez-vous que :</h4>
+                        </div>
+                        <div class="panel-body">
+                            <h6 class="text-slate">
+                                <i class="icon-checkmark3 text-success"></i> &nbsp;&nbsp;
+                                Le model d'import à bien été crée.
+                                <a href="{{ path('modelimport_index') }}" class=" pull-right text-warning">Acceder aux models d'import <i class="icon-redo2"></i> </a>
+                            </h6>
+                            <hr>
+                            <h6 class="text-slate">
+                                <i class="icon-checkmark3 text-success"></i> &nbsp;&nbsp;
+                                Le model d'import à bien été associé au bon fournisseur.
+                                <a href="{{ path('fournisseur_index') }}" class=" pull-right text-warning">Acceder aux fournisseurs <i class="icon-redo2"></i></a>
+                            </h6>
+                            <hr>
+                            <h6 class="text-slate">
+                                <i class="icon-checkmark3 text-success"></i> &nbsp;&nbsp;
+                                Le fichier du tarif est bien au format <b>XLS</b> ou <b>XLSX</b> et que son contenu est exploitable.
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="panel panel-primary panel-bordered">
+                        <div class="panel-heading text-center">
+                            <h4 class="panel-title"> Historique d'import </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table classicDatatableNoBtn">
+                                    <thead>
+                                        <tr>
+                                            <th>Fournisseur</th>
+                                            <th>Model import</th>
+                                            <th>Statut</th>
+                                            <th>Date</th>
+                                            <th>Tarif</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for upload in uploads %}
+                                            <tr>
+                                                <td class="text-bold">
+                                                    {% if upload.isMedia %}
+                                                        {{ upload.fournisseur.code }} <i class="badge badge-primary">MEDIA</i>
+                                                    {% else %}
+                                                        {{ upload.fournisseur.code }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-slate text-bold">
+                                                    {{ upload.fournisseur.modelimport.name }}
+                                                </td>
+                                                <td>
+                                                    {% if upload.statut == 0 %}<i class="label label-danger label-block">ECHEC</i> {% endif %}
+                                                    {% if upload.statut == 1 %}<i class="label label-warning label-block">INTERROMPU</i> {% endif %}
+                                                    {% if upload.statut == 2 %}<i class="label label-success label-block">SUCCES</i> {% endif %}
+                                                </td>
+                                                <td>{{ upload.createdAt|date('d/m/Y') }}</td>
+                                                <td><a href="{{ asset(vich_uploader_asset(upload, 'tarifFile')) }}" class="btn btn-xs btn-success" target="_blank"><i class="icon-file-excel"></i> <i class="icon-redo2"></i> </a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

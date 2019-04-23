@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique tarif{% endblock %}
+{% set currentPage = "Historique tarif" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-sm-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <h4 class="panel-title col-xs-9">Historique Tarif - {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                                <a href="{{path('history_octave')}}" class="col-xs-3 btn btn-sm btn-flat border-success text-success text-bold">
+                                    <i class="icon-undo2"></i> Historique d'Octave
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                                        <div class="row">
+                                            <div class="col-sm-5">
+                                                {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="submit" class="btn btn-info"><i class="icon-search4"></i> Valider</button>
+                                            </div>
+                                            <div class="col-sm-5"></div>
+                                        </div>
+                                    {{form_end(form)}}
+                                </div>
+                            </div>
+                            <br>
+                            <div class="table-responsive">
+                                <table class="table classicDatatableNoBtn">
+                                    <thead>
+                                        <tr>
+                                            <th>Ref fournisseur</th>
+                                            <th>Prix vente Actuel</th>
+                                            <th>Prix Achat Actuel</th>
+                                            <th>Date</th>
+                                            <th>Historique</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if fournisseur %}
+                                            {% for tarif in tarifs %}
+                                                <tr>
+                                                    <td class="text-bold"> {{ tarif.refFournisseur }} </td>
+                                                    <td> {{ tarif.prixVente }} </td>
+                                                    <td> {{ tarif.prixAchat is empty ? "Non renseigné" : tarif.prixAchat}} </td>
+                                                    <td> {{ tarif.createdAt|date('d/m/Y') }} </td>
+                                                    <td>
+                                                        <a href="{{ path('tarif_history_show', {'id': tarif.id}) }}" class="btn btn-success btn-sm text-bold">
+                                                            Voir <i class="icon-history"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="panel panel-primary bordered border-primary">
+                        <div class="panel-heading text-center">
+                            <h4 class="panel-title" >Historique d'import</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table classicDatatableNoBtn">
+                                    <thead>
+                                        <tr>
+                                            <th>Fournisseur</th>
+                                            <th>Statut</th>
+                                            <th>Date</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for upload in uploads %}
+                                            <tr>
+                                                <td class="text-bold">{{ upload.fournisseur.code }}</td>
+                                                <td>
+                                                    {% if upload.statut == 0 %}<i class="label label-danger label-block">ECHEC</i> {% endif %}
+                                                    {% if upload.statut == 1 %}<i class="label label-warning label-block">INTERROMPU</i> {% endif %}
+                                                    {% if upload.statut == 2 %}<i class="label label-success label-block">SUCCES</i> {% endif %}
+                                                </td>
+                                                <td>{{ upload.createdAt|date('d/m/Y') }}</td>
+                                                <td><a href="{{ asset(vich_uploader_asset(upload, 'tarifFile')) }}" class="btn btn-xs btn-success" target="_blank"><i class="icon-file-excel"></i> <i class="icon-redo2"></i> </a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

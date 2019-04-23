@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article special{% endblock %}
+{% set currentPage = "Article special" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title text-center">Articles speciaux</h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table classicDatatable">
+                        <thead>
+                            <tr>
+                                <th><b>Code</b> </th>
+                                <th><b>Ref Fournisseur</b></th>
+                                <th><b>Marque</b></th>
+                                <th><b>Prix normal Vente</b> </th>
+                                <th><b>Prix normal Achat</b> </th>
+                                <th><b>Prix spécial vente</b> </th>
+                                <th><b>Prix spécial achat</b> </th>
+                                <th><b>Remise achat spéciale</b> </th>
+                                <th><b>Commentaire</b> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for octave in octaves %}
+                                <span id="path2" data-path="{{ absolute_url(path('update_ref_fournisseur'))}}"></span>
+                                <span id="path3" data-path="{{ absolute_url(path('update_prix_special_vente'))}}"></span>
+                                <span id="path4" data-path="{{ absolute_url(path('update_prix_special_achat'))}}"></span>
+                                <span id="path5" data-path="{{ absolute_url(path('update_remise_speciale'))}}"></span>
+                                <span id="path6" data-path="{{ absolute_url(path('update_comment'))}}"></span>
+                                <tr>
+                                    <td class="text-bold">{{ octave.code }}</td>
+                                    <td>
+                                        <input type="text" class="refFr common-input" name="{{octave.id}}" value="{{octave.refFournisseur}}" />
+                                    </td>
+                                    <td>{{ octave.marque }}</td>
+                                    <td>{{ octave.prixVente }}</td>
+                                    <td>{{ octave.prixAchat }}</td>
+                                    <td>
+                                        <input type="number" min="0" max="999999999999" class="prixVenteTSQ common-input" name="{{octave.id}}" value="{{octave.prixVenteTSQ is defined ? octave.prixVenteTSQ : ''}}" />
+                                    </td>
+                                    <td>
+                                        <input type="number" min="0" max="999999999999" class="prixTSQ common-input" name="{{octave.id}}" value="{{octave.prixTSQ is defined ? octave.prixTSQ : ''}}" />
+                                    </td>
+                                    <td>
+                                        <input type="number" min="0" max="100" class="remiseTSQ common-input" name="{{octave.id}}" value="{{octave.remiseTSQ is defined ? octave.remiseTSQ : ''}}" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="comment common-input" name="{{octave.id}}" value="{{octave.commentaire}}" />
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style media="screen">
+        .inputBorder{
+            border: 1px solid lightgrey;
+        }
+        .common-input{
+            border:none;
+        }
+        input[type=number] { 
+            -moz-appearance: textfield;
+            appearance: textfield;
+            margin: 0; 
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+  <script>
+  $(function(){
+            
+            //=== ref fournisseur ===
+            $(".refFr").on("change paste keyup", function(){
+                var refFr = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path2").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, refFr : refFr},
+                    success: function(response){}
+                });
+            });
+             //=== prix special vente ===
+            $(".prixVenteTSQ").on("change paste keyup", function(){
+                var prix = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path3").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, prix : prix},
+                    success: function(response){}
+                });
+            });
+             //=== prix special achat ===
+            $(".prixTSQ").on("change paste keyup", function(){
+                var prix = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path4").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, prix : prix},
+                    success: function(response){}
+                });
+            });
+             //=== remise speciale ===
+            $(".remiseTSQ").on("change paste keyup", function(){
+                var remise = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path5").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, remise : remise},
+                    success: function(response){}
+                });
+            });
+             //=== commentaire ===
+            $(".comment").on("change paste keyup", function(){
+                var comment = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path6").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, comment : comment},
+                    success: function(response){}
+                });
+            });
+        });
+    </script>
+{% endblock %}

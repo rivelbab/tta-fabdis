@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}model import{% endblock %}
+{% set currentPage = "Model d'import" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-sm-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <h4 class="col-sm-8 panel-title">Tous les models d'imports</h4>
+                                <a href="{{ path('modelimport_new') }}" class="col-sm-4 btn btn-sm btn-primary text-bold"><i class="icon-add"></i> Créer un nouveau model </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table classicDatatableNoBtn">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nom</th>
+                                            <th>Date de création</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for modelimport in modelimports %}
+                                        <tr>
+                                            <td><i class="icon-primitive-square"></i> </td>
+                                            <td class="text-bold text-slate">{{ modelimport.name }}</td>
+                                            <td>{{ modelimport.createdAt|date('d/m/Y') }}</td>
+                                            <td><a class="btn btn-sm btn-primary" href="{{ path('modelimport_show', {'id': modelimport.id}) }}" title="Afficher" ><i class="icon-eye"></i> </a></td>
+                                            <td><a class="btn btn-sm btn-info" href="{{ path('modelimport_edit', {'id': modelimport.id}) }}" title="Modifier" ><i class="icon-pencil5"></i> </a></td>
+                                            <td>
+                                                <form method="post" action="{{ path('modelimport_delete', {'id': modelimport.id}) }}" onsubmit="return confirm('Voullez-vous vraiment supprimer ce model ?');">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ modelimport.id) }}">
+                                                    <button class="btn btn-sm btn-danger" title="Supprimer" ><i class="icon-cross3"></i> </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center">
+                            <h4 class="panel-title" >Détail du model import</h4>
+                        </div>
+                        <div class="panel-body">
+                            {% if display and selectedMI is defined %}
+                                <span id="frName" style="display:none">{{ selectedMI.fileHeader }}</span>
+                                <span id="ocName" style="display:none">{{ selectedMI.fields }}</span>
+                                <h3 class="text-center text-success"><sup><i class="icon-quotes-left"></i> </sup> {{ selectedMI.name }} <sup><i class="icon-quotes-right"></i></sup> </h3>
+                                <br>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-bold" style="font-size:1.2em">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="icon-arrow-down132"></i> Tarif</th>
+                                                <th class="text-primary"> <i class="icon-arrow-down132"></i> Octave</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="miTable"></tbody>
+                                    </table>
+                                </div>
+                                <br><br>
+                                <div class="text-center">
+                                    <a href="{{ path('modelimport_index') }}" class="btn border-danger text-danger btn-sm btn-flat"><i class="icon-cross3"></i> Fermer</a>
+                                    <a href="{{ path('modelimport_edit', {'id':selectedMI.id}) }}" class="btn border-info text-info btn-sm btn-flat"><i class="icon-pencil5"></i> Modifier</a>
+                                </div>
+                            {% else %}
+                                <h4 class="text-warning"><i class="icon-stack-empty"></i> Aucun model sélectionné</h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(function(){
+            var frName = $('#frName').text();
+            var ocName = $('#ocName').text();
+
+            var arrayFr = frName.split(',');
+            var arrayOc = ocName.split(',');
+            var t = [];
+
+            $.each(arrayOc, function(i, v){
+                t[i] = (typeof(arrayFr[i]) != 'undefined') ? arrayFr[i] : '';
+                var l = $('#miTable').append("<tr><td>"+ t[i] + "</td><td class='text-primary'>" + arrayOc[i] + "</td></tr>")
+            });
+        });
+    </script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

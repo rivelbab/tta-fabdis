@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Export tarif - {{fournisseur.code is defined ? fournisseur.code : ''}}{% endblock %}
+{% set currentPage = fournisseur.code is defined ? "Export tarif / " ~ fournisseur.code : "Export tarif" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                  <h4 class="panel-title col-sm-10">Export tarif - {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-info"><i class="icon-search4"></i> Valider</button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                        {{form_end(form)}}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table classicDatatable">
+                        <thead>                            
+                            <tr>
+                                <th>Marque</th>
+                                <th>Code</th>
+                                <th>Référence</th>
+                                <th>Réf cmd</th>
+                                <th>Réf fr</th>
+                                <th>fournisseur</th>
+                                <th>EAN</th>
+                                <th>décliné ?</th>
+                                <th>Article regroupement</th>
+                                <th>web ?</th>
+                                <th>Stock ?</th>
+                                <th>garantie</th>
+                                <th>Prix vente</th>
+                                <ht>Prix achat</th>
+                                <th>Remise achat</th>
+                                <th>Poids</th>
+                                <th>Description</th>
+                                <th>Désignation fr</th>
+                                <th>Text court</th>
+                                <th>Text long</th>
+                                <th>Date MAJ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if fournisseur is defined %}
+                                {% for article in articles %}
+                                    <span id="path1" data-path="{{ absolute_url(path('update_code'))}}"></span>
+                                    <tr class="no-margin no-padding">
+                                        <form id="form" name="form">
+                                            <td>{{ article.marque }} </td>
+                                            <td title="{{article.description}}">{{article.code}}</td>
+                                            <td> {{ article.reference }}</td>
+                                            <td>{{article.refcommende  }}</td>
+                                            <td>{{ article.reffournisseur }}</td>
+                                            <td>{{ article.fournisseur }}</td>
+                                            <td> {{ article.ean }} </td>
+                                            <td> {{ article.decline }}</td>
+                                            <td> {{ article.regroupement }}</td>
+                                            <td> {{ article.web }}</td>
+                                            <td> {{ article.stock }}</td>
+                                            <td> {{ article.garantie }}</td>
+                                            <td> {{ article.prixvente }}</td>
+                                            <td> {{ article.prixachat }}</td>
+                                            <td> {{ article.remise }}</td>
+                                            <td> {{ article.poids }}</td>
+                                            <td> {{ article.description }}</td>
+                                            <td> {{ article.designationfr }}</td>
+                                            <td> {{ article.textcourt }}</td>
+                                            <td> {{ article.textlong }}</td>
+                                            <td>{{ article.updatedAt is defined ? article.updatedAt|date('d/m/Y') : article.createdAt|date('d/m/Y') }}</td>
+                                        </form>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .common-input{
+            border:none;
+        }
+        input[type=number] { 
+            -moz-appearance: textfield;
+            appearance: textfield;
+            margin: 0; 
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+
+    <script type="text/javascript">
+
+        $(function(){            
+            //=== code ===
+            $(".code").on("change paste keyup", function(){
+                var code = $(this).val();
+                var articleId = $(this).attr('name');
+                var path = $("#path2").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: articleId, code : code},
+                    success: function(response){}
+                });
+            });
+            
+        });
+    </script>
+
+{% endblock %}

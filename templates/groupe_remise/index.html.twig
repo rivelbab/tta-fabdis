@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Groupe de remise{% endblock %}
+{% set currentPage = "Groupe de remise" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                              <h4 class="panel-title col-sm-8">Tous les groupes de remise</h4>
+                              <a href="{{ path('groupe_remise_new') }}" class="col-sm-4 btn btn-sm btn-primary text-bold"><i class="icon-add"></i> Créer un nouveau groupe </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table classicDatatableNoBtn">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nom</th>
+                                            <th>Fournisseur</th>
+                                            <th>Remise</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for groupe_remise in groupe_remises %}
+                                        <tr>
+                                            <td><i class="icon-primitive-square"></i> </td>
+                                            <td>{{ groupe_remise.nom }}</td>
+                                            <td class="text-warning text-bold">{{ groupe_remise.fournisseur.code }}</td>
+                                            <td>{{ groupe_remise.remise }}</td>
+                                            <td>
+                                                <a class="btn btn-xs btn-primary" href="{{ path('groupe_remise_show', {'id': groupe_remise.id}) }}" title="Afficher" ><i class="icon-eye"></i> </a>
+                                            </td>
+                                            <td><a class="btn btn-xs btn-info" href="{{ path('groupe_remise_edit', {'id': groupe_remise.id}) }}" title="Modifier" ><i class="icon-pencil5"></i> </a></td>
+                                            <td>
+                                                <form method="post" action="{{ path('groupe_remise_delete', {'id': groupe_remise.id}) }}" onsubmit="return confirm('Voullez-vous vraiment supprimer ce groupe_remise ?');">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ groupe_remise.id) }}">
+                                                    <button class="btn btn-xs btn-danger" title="Supprimer" ><i class="icon-cross3"></i> </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center">
+                            <h4 class="panel-title" >Détail du groupe de remise</h4>
+                        </div>
+                        <div class="panel-body">
+                            {% if display and selectedGR is defined %}
+                                <h4 class="text-center text-success"><sup><i class="icon-quotes-left"></i> </sup> {{ selectedGR.nom }} <sup><i class="icon-quotes-right"></i></sup> </h4>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-bold" style="font-size:1.2em">
+                                        <tbody>
+                                            <tr>
+                                                <td>Nom</td>
+                                                <td class="text-primary" >{{selectedGR.nom}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fournisseur</td>
+                                                <td class="text-primary" >{{selectedGR.fournisseur.code}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Remise</td>
+                                                <td class="text-primary">{{ selectedGR.Remise }} % </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tarif du </td>
+                                                <td class="text-primary" >{{selectedGR.fournisseur.createdAt|date("d/m/Y")}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Crée le  </td>
+                                                <td class="text-primary" >{{selectedGR.createdAt|date("d/m/Y")}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <br><br>
+                                <div class="text-center">
+                                    <a href="{{ path('groupe_remise_index') }}" class="btn border-danger text-danger btn-sm btn-flat"><i class="icon-cross3"></i> Fermer</a>
+                                    <a href="{{ path('groupe_remise_edit', {'id':selectedGR.id}) }}" class="btn border-info text-info btn-sm btn-flat"><i class="icon-pencil5"></i> Modifier</a>
+                                </div>
+                            {% else %}
+                              <h5 class="text-danger"><i class="icon-stack-empty"></i> Aucun groupe_remise sélectionné</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

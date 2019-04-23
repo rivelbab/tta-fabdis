@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification avant import{% endblock %}
+{% set currentPage = "Vérification" %}
+{% set activeFloatBtn = true %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row text-center">
+                            <div class="col-xs-10">
+                                <h5 class="panel-title">
+                                Fournisseur : <b class="text-slate">{{ fournisseur.code }}</b>
+                                &nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;
+                                Model d'import : <b class="text-slate">{{ mi.name }}</b>
+                                </h5>
+                            </div>
+                            <div class="col-xs-2">
+
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                                <div class="col-sm-4">
+                                    <label class="text-bold"><i class="icon-primitive-square"></i> Commencer l'import à partir de la ligne numéro :</label>
+                                    {{ form_widget(form.startReading, {'attr':{'class':'touchspin-empty'}}) }}
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="text-bold"><i class="icon-primitive-square"></i> Importer jusqu'à la ligne numéro :</label>
+                                    {{ form_widget(form.endReading, {'attr':{'class':'touchspin-empty'}}) }}
+                                </div>
+                                <div class="col-sm-4">
+                                    <br><button type="submit" class="btn btn-success btn-sm text-bold" id="btn-upload"><i class="icon-upload7"></i> Lancer l'import</button>
+                                    <a href="{{ path('home') }}" class="btn btn-xs btn-danger"><i class="icon-cross"></i> Annuler</a>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                {% for id, stringsById in dataArray %}
+                                    <tr>
+                                        <td>{{ id }}</td>
+                                        {% for string in stringsById %}
+                                            <td>{{ string }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script data-pace-options='{ "ajax": false }' src="{{ asset('js/plugins/pace/pace.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/forms/styling/uniform.min.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/plugins/forms/inputs/touchspin.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/form_input_groups.js') }}"></script>
+{% endblock %}

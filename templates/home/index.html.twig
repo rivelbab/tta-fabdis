@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} TTA FABDIS{% endblock %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block content %}
+            <div class="panel panel-flat">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <a href="{{ path('upload_index') }}" class="panel-box hvr-wobble-top bg-warning">
+                                <br><h2> <i class="icon-upload7"></i> Importer un tarif</h2> <br>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('article_index') }}" class="panel-box hvr-wobble-top bg-success">
+                                <br><h2><i class="icon-chart"></i> Exporter un tarif </h2> <br>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('fournisseur_index') }}" class="panel-box hvr-wobble-top bg-slate">
+                                <br> <h2><i class="icon-people"></i> Fournisseurs</h2> <br>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('modelimport_index') }}" class="panel-box hvr-wobble-skew bg-info">
+                                <br><h2><i class="icon-insert-template"></i> Models d'import</h2><br>
+                            </a>
+                        </div>
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <a href="{{ path('groupe_remise_index') }}" class="panel-box hvr-wobble-bottom bg-primary">
+                                <h2><i class="icon-percent"></i> Groupes de <br> remises</h2>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('commerce_index') }}" class="panel-box hvr-wobble-bottom bg-primary">
+                                <h2><i class="icon-folder"></i> Onglet <br> commerce</h2>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('media_index') }}" class="panel-box hvr-wobble-bottom bg-info">
+                                <h2><i class="icon-wrench"></i> Onglet <br/> Média</h2>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('history_tarif') }}" class="panel-box hvr-wobble-bottom bg-danger">
+                                <br><h2><i class="icon-history"></i> Historiques</h2><br>
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ path('codebarre') }}" class="panel-box hvr-wobble-bottom bg-primary">
+                                <br><h2><i class="icon-history"></i> Codebarre</h2><br>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+        {# ======================== page header ==================== #}
+        {% block header %}
+            {% include 'shared/header.html.twig'%}
+        {% endblock %}
+        {# ======================== page aside ==================== #}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig'%}
+        {% endblock %}
+        {# ======================== page header ==================== #}
+        {% block footer %}
+            {% include 'shared/footer.html.twig'%}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

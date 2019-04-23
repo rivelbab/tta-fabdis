@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fabdis media - {{fournisseur.code is defined ? fournisseur.code : ''}}{% endblock %}
+{% set currentPage = fournisseur.code is defined ? "Fabdis media / " ~ fournisseur.code : "media" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                  <h4 class="panel-title col-sm-10">Fabdis media - {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-info"><i class="icon-search4"></i> Valider</button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                        {{form_end(form)}}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table classicDatatable">
+                        <thead>                            
+                            <tr>
+                                <th>Marque</th>
+                                <th>Refcial</th>
+                                <th>Nom</th>
+                                <th>URL</th>
+                                <th>URLT</th>
+                                <th>Date MAJ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if fournisseur is defined %}
+                                {% for media in medias %}
+                                    <span id="path1" data-path="{{ absolute_url(path('update_status'))}}"></span>
+                                    <span id="path2" data-path="{{ absolute_url(path('update_ref_fournisseur'))}}"></span>
+                                    <span id="path3" data-path="{{ absolute_url(path('update_prix_special_vente'))}}"></span>
+                                    <span id="path4" data-path="{{ absolute_url(path('update_prix_special_achat'))}}"></span>
+                                    <span id="path5" data-path="{{ absolute_url(path('update_remise_speciale'))}}"></span>
+                                    <span id="path6" data-path="{{ absolute_url(path('update_comment'))}}"></span>
+
+                                    <tr class="no-margin no-padding">
+                                        <form id="form" name="form">
+                                            <td>{{ media.marque }} </td>
+                                            <td>{{ media.refciale }}</td>
+                                            <td> {{ media.nom }}</td>
+                                            <td> {{ comemrce.url }} </td>
+                                            <td> {{ media.urlt }}</td>
+                                            <td>{{ media.updatedAt is defined ? media.updatedAt|date('d/m/Y') : media.createdAt|date('d/m/Y') }}</td>
+                                        </form>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .common-input{
+            border:none;
+        }
+        input[type=number] { 
+            -moz-appearance: textfield;
+            appearance: textfield;
+            margin: 0; 
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+
+    <script type="text/javascript">
+
+        $(function(){
+            //=== is special ===
+            $('.isSpecial').change(function(){
+                var isSpecial = this.checked ? 1 : 0;
+                //var isSpecial = (Number(this.checked));
+                var mediaId = $(this).attr('name');
+                var path = $("#path1").attr('data-path');
+                //var mediaId = parseInt($(".mediaId").text());
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: mediaId, isSpecial : isSpecial},
+                    success: function(response){}
+                });
+            });
+            //=== ref fournisseur ===
+            $(".refFr").on("change paste keyup", function(){
+                var refFr = $(this).val();
+                var mediaId = $(this).attr('name');
+                var path = $("#path2").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: mediaId, refFr : refFr},
+                    success: function(response){}
+                });
+            });
+             //=== prix special vente ===
+            $(".prixVenteTSQ").on("change paste keyup", function(){
+                var prix = $(this).val();
+                var mediaId = $(this).attr('name');
+                var path = $("#path3").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: mediaId, prix : prix},
+                    success: function(response){}
+                });
+            });
+             //=== prix special achat ===
+            $(".prixTSQ").on("change paste keyup", function(){
+                var prix = $(this).val();
+                var mediaId = $(this).attr('name');
+                var path = $("#path4").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: mediaId, prix : prix},
+                    success: function(response){}
+                });
+            });
+             //=== remise speciale ===
+            $(".remiseTSQ").on("change paste keyup", function(){
+                var remise = $(this).val();
+                var mediaId = $(this).attr('name');
+                var path = $("#path5").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: mediaId, remise : remise},
+                    success: function(response){}
+                });
+            });
+             //=== commentaire ===
+            $(".comment").on("change paste keyup", function(){
+                var comment = $(this).val();
+                var mediaId = $(this).attr('name');
+                var path = $("#path6").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: mediaId, comment : comment},
+                    success: function(response){}
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

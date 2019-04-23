@@ -1,0 +1,231 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{fournisseur.code is defined ? fournisseur.code : ''}} Comparateur des prix {% endblock %}
+{% set currentPage = fournisseur.code is defined ? "Comparateur des prix / " ~ fournisseur.code : "Aucun fournisseur choisit" %}
+{% set activeFloatBtn = true %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title text-center">Comparateur des prix - {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-info"><i class="icon-search4"></i> Valider</button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                        {{form_end(form)}}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body no-margin">
+                <div class="table-responsive no-margin">
+                    <table class="table table-bordered no-margin" id="comparateurPrix">
+                        <thead>
+                            <tr>
+                                <th class="text-center text-bold" colspan="3">Général</th>
+                                <th class="text-center text-bold text-primary" colspan="4">Vente</th>
+                                <th class="text-center text-bold" colspan="4">Achat</th>
+                                <th class="text-center text-bold" colspan="2">Date</th>
+                                <th class="text-center text-bold" colspan="3">Action</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th><b class="label label-flat text-grey border-grey">CODE</b></th>
+                                <th><b class="label label-flat text-grey border-grey">REF FOURNISSEUR</b> </th>
+                                <th><b class="label bg-slate">PRIX OCTAVE</b></th>
+                                <th><b class="label bg-warning">PRIX TARIF</b></th>
+                                <th><b class="label label-flat text-grey border-grey">ECART</b></th>
+                                <th><b class="label label-default">PRIX DE BASE</b></th>
+                                <th><b class="label bg-slate">PRIX OCTAVE</b></th>
+                                <th><b class="label label-flat text-grey border-grey">ECART</b></th>
+                                <th><b class="label bg-warning">REMISE</b></th>
+                                <th><b class="label label-default">PRIX DE BASE</b></th>
+                                <th><b class="label bg-slate">OCTAVE</b></th>
+                                <th><b class="label bg-warning">TARIF</b></th>
+                                <th><b class="label label-flat text-grey border-grey">SPECIAL ?</b></th>
+                                <th><b class="label label-flat text-grey border-grey">COMMENTAIRE</b></th>
+                                <th class="hide"></th>
+                                <th class="hide"></th>
+                                <th><b class="label label-flat text-grey border-grey">TRACABILITE</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hide">
+                                <td></td>
+                                <td>ARTICLE.RefArticle</td>
+                                <td>ARTICLE_FOURNISSEUR.ArtReference</td>
+                                <td>ARTICLE.PrixHT</td>
+                                <td>ARTICLE.PrixHT</td>
+                                <td></td>
+                                <td>ARTICLE.PrixHT</td>
+                                <td>ARTICLE_FOURNISSEUR.PrixHT</td>
+                                <td></td>
+                                <td>ARTICLE_FOURNISSEUR.Remise</td>
+                                <td>ARTICLE_FOURNISSEUR.PrixHT</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td> +, -, #, =, hausse, baisse, différent, achat, vente, idem</td>
+                                <td></td>
+                                <td>ARTICLE.Texte1</td>
+                            </tr>
+                            {% if fournisseur is defined %}
+                                {% for article in articles %}
+                                    {% set dv = -1 * article.difVente %}
+                                    {% set pv = (article.oPrixVente * 10) / 100 %}
+                                    {% set da = -1 * article.difAchat %}
+                                    <span id="path1" data-path="{{ absolute_url(path('update_status'))}}"></span>
+                                    <span id="path6" data-path="{{ absolute_url(path('update_comment'))}}"></span>
+                                    <tr>
+                                        <td></td>
+                                        <td class="{{ (pv > dv and -1 * dv > pv) ? 'text-bold text-danger' : 'text-bold' }}" title="{{ article.oLibelle is defined ? article.oLibelle : '' }}">
+                                            {{ article.oCode }}
+                                        </td>
+                                        <td class="text-bold" title="{{ article.tDescription is defined ? article.tDescription : '' }}">{{ article.oRefFournisseur }}</td>
+                                        <td class="text-primary text-bold">{{ article.oPrixVente|number_format(2, '.' , '') }}</td>
+                                        <td class="text-primary text-bold">{{ article.tPrixVente|number_format(2, '.' , '') }}</td>
+                                        <td class="text-primary text-bold">
+                                            {% if article.difVente < 0 %} <b class="text-bold"><i class=" text-success icon-arrow-up7"></i> {{ dv|number_format(2, '.' , ',') }} </b> {% endif %}
+                                            {% if article.difVente > 0 %} <b class="text-bold"><i class="text-danger icon-arrow-down7"></i> {{ dv|number_format(2, '.' , ',')}} </b>  {% endif %}
+                                            {% if article.difVente == 0 %} <b> 0 </b>  {% endif %}
+                                        </td>
+                                        <td class="text-bold text-primary">{{ article.prixBaseVente|number_format(2, '.' , '') }}</td>
+                                        <td class="text-bold">{{ article.oPrixAchat|number_format(2, '.' , ',') }}</td>
+                                        <td>
+                                            {% if article.difAchat < 0 %} <b class="text-bold"><i class=" text-success icon-arrow-up7"></i> {{ da|number_format(2, '.' , ',') }} </b> {% endif %}
+                                            {% if article.difAchat > 0 %} <b class="text-bold"><i class="text-danger icon-arrow-down7"></i> {{ da|number_format(2, '.' , ',')}} </b>  {% endif %}
+                                            {% if article.difAchat == 0 %} <b> 0 </b>  {% endif %}
+                                        </td>
+                                        <td class="text-bold">{{ article.remise }}</td>
+                                        <td class="text-bold">{{ article.prixBaseAchat|number_format(2, '.' , '') }}</td>
+                                        <td>{{ article.oUpdatedAt is defined ? article.oUpdatedAt|date('d/m/Y') : article.oCreatedAt|date('d/m/Y') }}</td>
+                                        <td>{{ article.tUpdatedAt is defined ? article.tUpdatedAt|date('d/m/Y') : article.tCreatedAt|date('d/m/Y') }}</td>
+                                        <td>
+                                            <input type="checkbox" class="isSpecial" name="{{article.idOctave}}" {{ article.oIsSpecial == 1 ? 'checked':'' }} />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="comment common-input" name="{{article.idOctave}}" value="{{article.oComment}}" />
+                                        </td>
+                                        <td class="hide">
+                                            {% if dv > 0 %} +, #, hausse, différent, vente {% endif %}
+                                            {% if dv < 0 %} -, #, baisse, différent, vente {% endif %}
+                                            {% if dv == 0 %}=, idem{% endif %}
+                                        </td>
+                                        <td class="hide">
+                                            {% if da > 0 %} +, #, hausse, différent, achat {% endif %}
+                                            {% if da < 0 %} -, #, baisse, différent, achat {% endif %}
+                                            {% if da == 0 %}=, idem{% endif %}
+                                        </td>
+                                        <td>MAJ TTA {{"now"|date("d/m/Y")}}</td>
+                                    </tr>
+                                {% endfor %}
+                                {% if produits is defined %}
+                                {% for produit in produits %}
+                                    <tr>
+                                        <td></td>
+                                        <td class="text-bold text-success">{{ produit.code }} </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-bold text-success">{{ produit.prix|number_format(2, '.' , '') }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="hide"></td>
+                                        <td class="hide"></td>
+                                        <td>MAJ TTA {{"now"|date("d/m/Y")}}</td>
+                                    </tr>
+                                {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <span id="path" data-path="{{ absolute_url(path('fournisseur_stats_update'))}}"></span>
+                <span id="fournisseurId" class="hide">{{ fournisseur.id is defined ? fournisseur.id : '' }}</span>
+            </div>
+        </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style media="screen">
+        .common-input{
+            border:none;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+  <script type="text/javascript">
+
+        $(function(){
+            //=== is special ===
+            $('.isSpecial').change(function(){
+                var isSpecial = this.checked ? 1 : 0;
+                //var isSpecial = (Number(this.checked));
+                var octaveId = $(this).attr('name');
+                var path = $("#path1").attr('data-path');
+                //var octaveId = parseInt($(".octaveId").text());
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, isSpecial : isSpecial},
+                    success: function(response){}
+                });
+            });
+            
+             //=== commentaire ===
+            $(".comment").on("change paste keyup", function(){
+                var comment = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path6").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, comment : comment},
+                    success: function(response){}
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail aricle{% endblock %}
+{% set currentPage = "Détail article" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-primary">
+                            <div class="row">
+                                <h3 class="col-sm-8 panel-title"> Détail article <span class="text-bold text-slate">{{tarif.refFournisseur}}</span> </h3>
+                                <a href="{{ path('tarif_index', {'fournisseurId':tarif.fournisseurId}) }}" class="col-sm-4 btn btn-sm btn-flat border-slate text-slate text-bold">
+                                    <i class="icon-undo2"></i> Revenir à l'accueil des articles
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered text-bold">
+                                    <tbody>                                        
+                                        <tr>
+                                            <th>Référence fournisseur</th>
+                                            <td class="text-slate">{{ tarif.refFournisseur }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Référence commande</th>
+                                            <td class="text-slate">{{ tarif.refCommande }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Référence</th>
+                                            <td class="text-slate">{{ tarif.reference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Prix d'achat</th>
+                                            <td class="text-slate">{{ tarif.prixAchat }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Prix de vente</th>
+                                            <td class="text-slate">{{ tarif.prixVente }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Remise <small>( <i class="icon-percent"></i> )</small> </th>
+                                            <td class="text-slate">{{ tarif.remise }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Marque</th>
+                                            <td class="text-slate">{{ tarif.marque }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Groupe de remise</th>
+                                            <td class="text-slate">{{ tarif.groupeRemise }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Poids</th>
+                                            <td class="text-slate">{{ tarif.poids }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Codebarre</th>
+                                            <td class="text-slate">{{ tarif.codebarre }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Nomenclature douanière</th>
+                                            <td class="text-slate">{{ tarif.hscode }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>PaysOrigine</th>
+                                            <td class="text-slate">{{ tarif.paysOrigine }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Description</th>
+                                            <td class="text-slate">{{ tarif.description }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Date de création</th>
+                                            <td class="text-slate">{{ tarif.createdAt|date('d/m/Y') }}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="text-center">
+                                        <tr>
+                                            <td><a class="btn btn-xs btn-info" href="{{ path('tarif_edit', {'id': tarif.id}) }}" ><i class="icon-pencil5"></i> Modifier</a></td>
+                                            <td>
+                                                <form method="post" action="{{ path('fournisseur_delete', {'id': tarif.id}) }}" onsubmit="return confirm('Voullez-vous vraiment supprimer cet article ?');">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tarif.id) }}">
+                                                    <button class="btn btn-xs btn-danger"><i class="icon-cross3"></i> Supprimer</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

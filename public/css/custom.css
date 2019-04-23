@@ -1,0 +1,27 @@
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 70px;
+    background: #28343a;
+    text-align: center;
+    font-size: 1.1em;
+}
+.panel-box{
+display: inline-block;
+    width: 100%;
+    margin: 1%;
+    margin-bottom: 5%;
+    text-align: center;
+    padding: 8%;
+    border-radius: 5%;
+}
+.panel-box:hover{
+color:white;
+}
+.vich-file{
+    border: 1px solid #2196f3;
+    padding: 1%;
+    color: darkslategrey;
+    font-weight: bold;
+}

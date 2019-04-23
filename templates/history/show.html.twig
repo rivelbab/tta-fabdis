@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique {{ tarif.refFournisseur }}{% endblock %}
+{% set currentPage = "Historique tarif / " ~ tarif.refFournisseur %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <h3 class="col-xs-8 panel-title"> Historique du {{tarif.refFournisseur}}</h3>
+                        <a href="{{ path('history_tarif', {'fournisseurId':tarif.fournisseurId}) }}" class="col-sm-4 btn btn-sm btn-flat border-slate text-slate text-bold">
+                            <i class="icon-undo2"></i> Revenir à l'accueil des historiques
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table classicDatatableNoBtn">
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Prix achat</th>
+                                    <th>Remise</th>
+                                    <th>Prix vente</th>
+                                    <th>Date</th>
+                                    <th>Opération</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tarifLog in tarifLogs %}
+                                    <tr>
+                                        <td>{{ tarifLog.version }}</td>
+                                        <td>{{ tarifLog.action == 'update' ? tarifLog.data.prixAchat is defined ? tarifLog.data.prixAchat: "Non modifié" : tarifLog.data.prixAchat is empty ? "Non renseigné" : tarifLog.data.prixAchat }}</td>
+                                        <td>{{ tarifLog.action == 'update' ? tarifLog.data.remise is defined ? tarifLog.data.remise: "Non modifié" : tarifLog.data.remise is empty ? "Non renseigné" : tarifLog.data.remise }}</td>
+                                        <td>{{ tarifLog.action == 'update' ? tarifLog.data.prixVente is defined ? tarifLog.data.prixVente: "Non modifié" : tarifLog.data.prixVente is empty ? "Non renseigné" : tarifLog.data.prixVente }}</td>
+                                        <td>{{ tarifLog.loggedAt|date('d/m/Y') }}</td>
+                                        <td>
+                                            {% if tarifLog.action == 'create' %} <i class="label label-info"> Création </i> {% endif %}
+                                            {% if tarifLog.action == 'update' %} <i class="label label-warning"> Mise à jour </i> {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Codebarre{% endblock %}
+{% set currentPage = "Model d'import" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <span id="lookup_path" data-path="{{ absolute_url(path('codebarre_lookup'))}}"></span>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <h4 class="col-sm-8 panel-title">Trouver le code barre</h4>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table id="myTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Marque</th>
+                                    <th>Codebarre</th>
+                                    <th>Lien image</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myTbody">
+                                <tr>
+                                    <td>D910</td>
+                                    <td>Fluke Networks</td>
+                                    <td>EAN1</td>
+                                    <td>Link 1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+    $(function(){
+
+        var path = $("#lookup_path").attr('data-path');
+        var ref, marque, ean, image;
+
+        $.ajax({
+            type: 'POST',
+            url: path,
+            dataType: 'json',
+            success: function(data){ 
+              console.log(data);
+            }
+        });
+    });
+        
+    </script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

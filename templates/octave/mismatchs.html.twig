@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articles mismatchs - {{fournisseur.code is defined ? fournisseur.code : ''}}{% endblock %}
+{% set currentPage = fournisseur.code is defined ? "Articles mismatchs / " ~ fournisseur.code : "Tous les mismatchs" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title text-center">Tous les mismatchs - {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-info"><i class="icon-search4"></i> Valider</button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                        {{form_end(form)}}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table classicDatatable table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Ref fournisseur</th>
+                                <th>npu</th>
+                                <th>Marque</th>
+                                <th>Prix Vente</th>
+                                <th>Prix Achat</th>                                
+                                <th>Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if fournisseur is defined %}
+                                {% for octave in octaves %}
+                                    <span id="path1" data-path="{{ absolute_url(path('update_etat'))}}"></span>
+                                    <span id="path2" data-path="{{ absolute_url(path('update_ref_fournisseur'))}}"></span>
+                                    <span id="path6" data-path="{{ absolute_url(path('update_comment'))}}"></span>
+                                    <tr class="no-margin no-padding">
+                                        <td class="text-bold" title="{{octave.libelle}}" >{{ octave.code }}</td>
+                                        <td class="text-danger text-bold ">
+                                            <input type="text" class="refFr common-input" name="{{octave.id}}" value="{{octave.refFournisseur}}" />
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" class="npu" name="{{octave.id}}" {{ octave.etat == 1 ? 'checked':'' }} />
+                                            <span class="hide">{{octave.etat}}</span>
+                                        </td>
+                                        <td>{{ octave.marque }}</td>
+                                        <td>{{ octave.prixVente }}</td>
+                                        <td>{{ octave.prixAchat }}</td>
+                                        <td>
+                                            <input type="text" class="comment common-input" name="{{octave.id}}" value="{{octave.commentaire}}" />
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style media="screen">
+        .common-input{
+            border:none;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+  <script type="text/javascript">
+
+        $(function(){
+            //=== is npu ===
+            $('.npu').change(function(){
+                var npu = this.checked ? 1 : 0;
+                var octaveId = $(this).attr('name');
+                var path = $("#path1").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, npu : npu},
+                    success: function(response){}
+                });
+            });
+            //=== ref fournisseur ===
+            $(".refFr").on("change paste keyup", function(){
+                var refFr = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path2").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, refFr : refFr},
+                    success: function(response){}
+                });
+            });
+             //=== commentaire ===
+            $(".comment").on("change paste keyup", function(){
+                var comment = $(this).val();
+                var octaveId = $(this).attr('name');
+                var path = $("#path6").attr('data-path');
+
+                $.ajax({
+                    type: 'POST',
+                    url: path,
+                    data: {id: octaveId, comment : comment},
+                    success: function(response){}
+                });
+            });
+        });
+    </script>
+{% endblock %}

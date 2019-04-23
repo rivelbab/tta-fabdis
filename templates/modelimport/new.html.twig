@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Model{% endblock %}
+{% set currentPage = "Nouveau Model" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <h3 class="col-sm-8 panel-title"> Ajout d'un nouveau model d'import</h3>
+                        <a href="{{ path('modelimport_index') }}" class="col-sm-4 btn btn-sm btn-flat border-slate text-slate text-bold">
+                            <i class="icon-undo2"></i> Revenir à l'accueil des models
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {% include 'modelimport/_form.html.twig' %}
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function() {
+            // Basic initialization tokenfield
+            var engine = new Bloodhound({
+              local: [
+                  {value: 'fabricant'},
+                  {value: 'marque'},
+                  {value: 'gamme'},
+                  {value: 'refciale'},
+                  {value: 'refarticle'},
+                  {value: 'refinfor'},
+                  {value: 'gtin13'},
+                  {value: 'libelle30'},
+                  {value: 'libelle80'},
+                  {value: 'libelle240'},
+                  {value: 'datetarif'},
+                  {value: 'tarif'},
+                  {value: 'tarifd'},
+                  {value: 'dev'},
+                  {value: 'tva'},
+                  {value: 'qt'},
+                  {value: 'ub'},
+                  {value: 'qmc'},
+                  {value: 'mul'},
+                  {value: 'qmv'},
+                  {value: 'qmvt'},
+                  {value: 'st'},
+                  {value: 'delai'},
+                  {value: 'edi'},
+                  {value: 'dug'},
+                  {value: 'sta'},
+                  {value: 'datesta'},
+                  {value: 'refant'},
+                  
+              ],
+              datumTokenizer: function(d) {
+                return Bloodhound.tokenizers.whitespace(d.value);
+              },
+              queryTokenizer: Bloodhound.tokenizers.whitespace
+            });
+
+            engine.initialize();
+
+            $('.tokenfield').tokenfield({
+              typeahead: [null, {
+                  source: engine.ttAdapter(),
+                  display: 'value'
+              }]
+            });
+        });
+    </script>
+    <script type="text/javascript" src="{{ asset('js/plugins/forms/tags/tokenfield.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/forms/inputs/typeahead/typeahead.bundle.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/clipboard/clipboard.min.js') }}"></script>
+{% endblock %}

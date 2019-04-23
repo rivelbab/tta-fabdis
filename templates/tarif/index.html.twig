@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articles - {{fournisseur.code is defined ? fournisseur.code : ''}}{% endblock %}
+{% set currentPage = fournisseur.code is defined ? "Articles tarif / " ~ fournisseur.code : "Tous les articles" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                  <h4 class="panel-title col-sm-10">Tous les articles - {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                  <a href="{{ path('tarif_new') }}" class="col-sm-2 btn btn-sm btn-primary text-bold"><i class="icon-add"></i> Ajouter un article </a>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-info"><i class="icon-search4"></i> Valider</button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                        {{form_end(form)}}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table classicDatatable">
+                        <thead>
+                            <tr>
+                                <th>Ref fournisseur</th>
+                                <th>Ref commande</th>
+                                <th>Reference</th>
+                                <th>Prix vente</th>
+                                <th>Prix Achat</th>
+                                <th>Marque</th>
+                                <th>Remise</th>
+                                <th>Groupe de remise</th>
+                                <th>Date de création</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if fournisseur is defined %}
+                                {% for tarif in tarifs %}
+                                    <tr>
+                                        <td class="text-warning text-bold">{{ tarif.refFournisseur }}</td>
+                                        <td>{{ tarif.refCommande }}</td>
+                                        <td>{{ tarif.reference }}</td>
+                                        <td>{{ tarif.prixVente }}</td>
+                                        <td>{{ tarif.prixAchat }}</td>
+                                        <td>{{ tarif.marque }}</td>
+                                        <td>{{ tarif.remise }}</td>
+                                        <td>{{ tarif.groupeRemise }}</td>
+                                        <td>{{ tarif.updatedAt is defined ? tarif.updatedAt|date('d/m/Y') : tarif.createdAt|date('d/m/Y') }}</td>
+                                        <td>
+                                            <a class="btn btn-xs btn-primary" href="{{ path('tarif_show', {'id': tarif.id}) }}" title="Afficher" ><i class="icon-eye"></i> </a>
+                                        </td>
+                                        <td><a class="btn btn-xs btn-info" href="{{ path('tarif_edit', {'id': tarif.id}) }}" title="Modifier" ><i class="icon-pencil5"></i> </a></td>
+                                        <td>
+                                            <form method="post" action="{{ path('tarif_delete', {'id': tarif.id}) }}" onsubmit="return confirm('Voullez-vous vraiment supprimer cet article ?');">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tarif.id) }}">
+                                                <button class="btn btn-xs btn-danger" title="Supprimer" ><i class="icon-cross3"></i> </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+{% endblock %}

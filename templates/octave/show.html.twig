@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail aricle{% endblock %}
+{% set currentPage = "Détail article" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-primary">
+                            <div class="row">
+                                <h3 class="col-sm-8 panel-title"> Détail article <span class="text-bold text-slate">{{octave.code}}</span> </h3>
+                                <a href="{{ path('octave_index', {'fournisseurId':octave.fournisseurId}) }}" class="col-sm-4 btn btn-sm btn-flat border-slate text-slate text-bold">
+                                    <i class="icon-undo2"></i> Revenir à l'accueil des articles
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered text-bold">
+                                    <tbody>
+                                        <tr>
+                                            <th>Référence fournisseur</th>
+                                            <td class="text-slate">{{ octave.code }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Référence fournisseur</th>
+                                            <td class="text-slate">{{ octave.refFournisseur }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Référence commande</th>
+                                            <td class="text-slate">{{ octave.refCommande }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Référence</th>
+                                            <td class="text-slate">{{ octave.reference }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Prix d'achat</th>
+                                            <td class="text-slate">{{ octave.prixAchat }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Prix de vente</th>
+                                            <td class="text-slate">{{ octave.prixVente }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Remise <small>( <i class="icon-percent"></i> )</small> </th>
+                                            <td class="text-slate">{{ octave.remise }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Marque</th>
+                                            <td class="text-slate">{{ octave.marque }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Etat</th>
+                                            <td class="text-slate">
+                                                {% if octave.etat == 0 %}ACTIF{% endif %}
+                                                {% if octave.etat == 1 %}NPU{% endif %}
+                                                {% if octave.etat == 2 %}FIN DE STOCK{% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Poids</th>
+                                            <td class="text-slate">{{ octave.poids }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Codebarre</th>
+                                            <td class="text-slate">{{ octave.codebarre }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Nomenclature douanière</th>
+                                            <td class="text-slate">{{ octave.hscode }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Libelle</th>
+                                            <td class="text-slate">{{ octave.libelle }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Commentaire</th>
+                                            <td class="text-slate">{{ octave.commentaire }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Date de création</th>
+                                            <td class="text-slate">{{ octave.createdAt|date('d/m/Y') }}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="text-center">
+                                        <tr>
+                                            <td><a class="btn btn-xs btn-info" href="{{ path('octave_edit', {'id': octave.id}) }}" ><i class="icon-pencil5"></i> Modifier</a></td>
+                                            <td>
+                                                <form method="post" action="{{ path('fournisseur_delete', {'id': octave.id}) }}" onsubmit="return confirm('Voullez-vous vraiment supprimer cet article ?');">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ octave.id) }}">
+                                                    <button class="btn btn-xs btn-danger"><i class="icon-cross3"></i> Supprimer</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

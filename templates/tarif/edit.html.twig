@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification article{% endblock %}
+{% set currentPage = "Modification article" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-primary">
+                            <div class="row">
+                                <h3 class="col-sm-8 panel-title"> Modification article</h3>
+                                <a href="{{ path('tarif_index', {'fournisseurId':tarif.fournisseurId}) }}" class="col-sm-4 btn btn-sm btn-flat border-slate text-slate text-bold">
+                                    <i class="icon-undo2"></i> Revenir à l'accueil des articles
+                                </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            {{ include('tarif/_form.html.twig', {'btn_label': 'Mettre à jour cet article'}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

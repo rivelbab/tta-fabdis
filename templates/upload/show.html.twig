@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique d'import{% endblock %}
+{% set currentPage = "Historique d'import" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-11">
+                                <h4 class="panel-title">Historique d'import dans TTA</h4>
+                            </div>
+                            <div class="col-xs-1">
+                                <a href="{{ path('home') }}" class="btn btn-sx btn-danger"><i class="icon-undo2"></i> Retour</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <h1>Tab here</h1>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

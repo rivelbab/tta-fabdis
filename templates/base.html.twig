@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}Testoon TTA{% endblock %}</title>
+
+        <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/png" />
+	    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+        <meta name="author" content="Rivel Babindamana">
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900">
+            <link rel="stylesheet" href="{{ asset('css/icons/icomoon/styles.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/core.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/components.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/colors.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/hover-min.css') }}">
+        {% endblock %}
+    </head>
+    <body class="{{bodyClass is defined ? bodyClass : 'sidebar-xs has-detached-left'}}">
+        {% block body %}{% endblock %}
+        {% block javascripts %}
+                <!-- Core JS files -->
+                <script type="text/javascript" src="{{ asset('js/core/libraries/jquery.min.js') }}"></script>
+                <script type="text/javascript" src="{{ asset('js/core/libraries/bootstrap.min.js') }}"></script>
+                <script type="text/javascript" src="{{ asset('js/plugins/loaders/blockui.min.js') }}"></script>
+
+                <script type="text/javascript" src="{{ asset('js/core/app.js') }}"></script>
+                <script type="text/javascript" src="{{ asset('js/custom.js')}}"></script>
+				<script type="text/javascript">
+	                $(function() {
+	                    var $elem = $('.page-container');
+	                    $('#nav_up').fadeIn('slow');
+	                    $('#nav_down').fadeIn('slow');
+	                    $(window).bind('scrollstart', function(){
+	                        $('#nav_up,#nav_down').stop().animate({'opacity':'0.2'});
+	                    });
+	                    $(window).bind('scrollstop', function(){
+	                        $('#nav_up,#nav_down').stop().animate({'opacity':'1'});
+	                    });
+	                    $('#nav_down').click(
+	                        function (e) {
+	                            $('html, body').animate({scrollTop: $elem.height()}, 800);
+	                        }
+	                    );
+	                    $('#nav_up').click(
+	                        function (e) {
+	                            $('html, body').animate({scrollTop: '0px'}, 800);
+	                        }
+	                    );
+	                });
+	            </script>
+        {% endblock %}
+    </body>
+</html>
