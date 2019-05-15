@@ -14,7 +14,7 @@ class FournisseurType extends AbstractType
     {
         $builder
             ->add('code')
-            ->add('libelle')
+            ->add('trigramme')
             ->add('remise')
             ->add('commentaire')
         ;

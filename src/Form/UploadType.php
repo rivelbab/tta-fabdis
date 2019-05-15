@@ -19,6 +19,7 @@ class UploadType extends AbstractType
             'download_label' => true,
             ])
             ->add('isMedia')
+            ->add('isGoogleShopping')
         ;
     }
 

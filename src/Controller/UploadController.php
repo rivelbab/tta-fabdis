@@ -7,6 +7,7 @@ use App\Entity\Commerce;
 use App\Entity\Media;
 use App\Entity\Article;
 use App\Entity\Upload;
+use App\Entity\Codebarre;
 use App\Form\UploadType;
 
 use App\Repository\ModelimportRepository;
@@ -79,6 +80,7 @@ class UploadController extends AbstractController
         $commerce = new Commerce();
         $media = new Media();
         $article = new Article();
+        $codebarre = new Codebarre();
         $worksheet = null;
         $fournisseur = $upload->getFournisseur();
         $fr_mi = null;
@@ -129,6 +131,12 @@ class UploadController extends AbstractController
                 if ($worksheet == null) {
                     $worksheet = $spreadsheet->getSheetByName('Média');
                 }
+            } catch (\Throwable $th) {
+                $this->addFlash('warning', "Votre fichier ne contient pas d'onglet 03_MEDIA ni Média");
+            }
+        } elseif($upload->getIsGoogleShopping()) {
+            try {
+                $worksheet = $spreadsheet->getSheet(0);
             } catch (\Throwable $th) {
                 $this->addFlash('warning', "Votre fichier ne contient pas d'onglet 03_MEDIA ni Média");
             }
@@ -187,6 +195,11 @@ class UploadController extends AbstractController
                         if (null !== $media->getRefciale()) {
                             $media->setRefciale(trim($media->getRefciale(), " \t\n\r"));
                         }
+                    } elseif ($upload->getIsGoogleShopping()) {
+
+                        //****** insertion des donnees google shopping ******/
+                        $codebarre->$value = $dataArray[$row][$key];
+                        $codebarre->setFournisseurId($fournisseur->getId());
                     } else {
                         //****** configuration tarif articles ******
                         $commerce->$value = $dataArray[$row][$key];
@@ -239,6 +252,25 @@ class UploadController extends AbstractController
                         } else {
                             $upload->setStatut(2);
                             $this->getEm()->persist($media);
+                            $this->getEm()->flush();
+                        }
+
+                    } elseif ($upload->getIsGoogleShopping()) {
+                        $media_dup = $this->getEm()->getRepository(Codebarre::class)->findOneBy(['item' => $codebarre->getItem()]);
+                        if ($media_dup !== null) {
+                            foreach ($fr_mi_fields as $key => $value) {
+                                if ($value !== "item") {
+                                    $media_dup->$value = $codebarre->$value;                                    
+                                }
+                                if (null !== $codebarre->getItem()) {
+                                    $media_dup->setItem(trim($codebarre->getItem(), " \t\n\r"));
+                                }
+                            }
+                            $upload->setStatut(2);
+                            $this->getEm()->flush();
+                        } else {
+                            $upload->setStatut(2);
+                            $this->getEm()->persist($codebarre);
                             $this->getEm()->flush();
                         }
 
@@ -297,6 +329,8 @@ class UploadController extends AbstractController
 
             if ($upload->getIsMedia()) {
                 return $this->redirectToRoute('media_index', ['fournisseurId' => $fournisseur->getId()]);
+            } elseif ($upload->getIsGoogleShopping()) {
+                return $this->redirectToRoute('codebarre_show', ['fournisseurId' => $fournisseur->getId()]);
             } else {
                 return $this->redirectToRoute('commerce_index', ['fournisseurId' => $fournisseur->getId()]);
             }

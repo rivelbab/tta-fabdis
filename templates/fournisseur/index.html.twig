@@ -32,9 +32,7 @@
                                             <th>#</th>
                                             <th>Code</th>
                                             <th>Model d'import</th>
-                                            <th>Remise</th>
-                                            <th>Date de création</th>
-                                            <th>Commentaire</th>
+                                            <th>Date</th>
                                             <th></th>
                                             <th></th>
                                             <th></th>
@@ -45,10 +43,8 @@
                                         <tr>
                                             <td><i class="icon-user"></i> </td>
                                             <td>{{ fournisseur.code }}</td>
-                                            <td class="text-warning text-bold">{{ fournisseur.modelimport.name }}</td>
-                                            <td>{{ fournisseur.remise }}</td>
+                                            <td class="text-warning text-bold">{{ fournisseur.miCommerce.name }}</td>
                                             <td>{{ fournisseur.createdAt|date('d/m/Y') }}</td>
-                                            <td>{{ fournisseur.commentaire }}</td>
                                             <td>
                                                 <a class="btn btn-xs btn-primary" href="{{ path('fournisseur_show', {'id': fournisseur.id}) }}" title="Afficher" ><i class="icon-eye"></i> </a>
                                             </td>
@@ -82,39 +78,11 @@
                                             <tr>
                                                 <td>Code</td>
                                                 <td class="text-primary" >{{selectedFr.code}}</td>
-                                            </tr>
+                                            </tr>                                      
+                                            
                                             <tr>
-                                                <td>Libelle</td>
-                                                <td class="text-primary" >{{selectedFr.libelle}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Remise</td>
-                                                <td class="text-primary">{{ selectedFr.Remise is empty ? 0 : selectedFr.remise }} % </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Model inport</td>
-                                                <td class="text-primary" >{{selectedFr.modelimport.name}} du {{selectedFr.modelimport.createdAt|date("d/m/Y")}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Markup 1 </td>
-                                                <td class="text-primary" >{{selectedFr.markup1 is empty ? 1 : selectedFr.markup1}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Markup 2</td>
-                                                <td class="text-primary" >{{selectedFr.markup2 is empty ? 1 : selectedFr.markup2}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Condition</td>
-                                                <td class="text-primary" >
-                                                    {% if selectedFr.critere == '100' %}Pas de condition spécifique{% endif %}
-                                                    {% if selectedFr.critere == '1' %}Multiplier tous les prix par markup1{% endif %}
-                                                    {% if selectedFr.critere == '2' %}Multiplier les prix < 4 euros par markup 1 et les autres par markup2{% endif %}
-                                                    {% if selectedFr.critere is empty %}Pas de condition spécifique{% endif %}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Commentaire</td>
-                                                <td class="text-primary" >{{selectedFr.commentaire is empty ? 'Aucun commentaire' : selectedFr.commentaire}}</td>
+                                                <td>Model inport commerce</td>
+                                                <td class="text-primary" >{{selectedFr.miCommerce.name}} du {{selectedFr.miCommerce.createdAt|date("d/m/Y")}}</td>
                                             </tr>
                                         </tbody>
                                     </table>

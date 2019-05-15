@@ -16,6 +16,7 @@
         {% endblock %}
         {% block content %}
         <span id="lookup_path" data-path="{{ absolute_url(path('codebarre_lookup'))}}"></span>
+        <span id="save_path" data-path="{{ absolute_url(path('saveproduct'))}}"></span>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
@@ -24,23 +25,15 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table id="myTable" class="table">
+                        <table id="myTable2" class="table">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Code</th>
                                     <th>Marque</th>
                                     <th>Codebarre</th>
-                                    <th>Lien image</th>
                                 </tr>
-                            </thead>
-                            <tbody id="myTbody">
-                                <tr>
-                                    <td>D910</td>
-                                    <td>Fluke Networks</td>
-                                    <td>EAN1</td>
-                                    <td>Link 1</td>
-                                </tr>
-                            </tbody>
+                            </thead>                            
                         </table>
                     </div>
                 </div>
@@ -55,18 +48,158 @@
     $(function(){
 
         var path = $("#lookup_path").attr('data-path');
-        var ref, marque, ean, image;
+        var savePath = $("#save_path").attr('data-path');
+        var produits = [];
 
         $.ajax({
             type: 'POST',
             url: path,
             dataType: 'json',
-            success: function(data){ 
-              console.log(data);
+            success: function(data){
+				console.log(data);
+				/*                 
+                $.each(data, function(i, elm){
+                    produits[i] = {};
+                    $.each(elm.items, function(index, item){
+                        var ref, marque, ean ;
+                        if (index == 0) {
+                            ean = item.ean;
+                            ref = item.model;
+                            marque = item.brand;
+                            produits[i]['ref'] = ref;
+                            produits[i]['marque'] = marque;
+                            produits[i]['ean'] = ean;
+                            produits[i]['vide'] = '';
+
+                            $(document).ready(function(){
+                                $.post(savePath, 
+                                    {
+                                        titre: "produits",
+                                        produits: produits
+                                    },
+                                    function(data, status){
+                                        //console.log(data);
+                                    }
+                                );
+                            });                            
+                        }
+                    });                  
+                });
+                   */     
             }
         });
     });
-        
+	/*
+    $(function() {
+		    // Setting datatable defaults
+		    $.extend( $.fn.dataTable.defaults, {
+		        autoWidth: false,
+		        colReorder: true,
+		        dom: '<"datatable-header"fBl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+		        language: {
+		            search: '<span>Filtre:</span> _INPUT_',
+		            searchPlaceholder: 'Tapez pour filter...',
+		            lengthMenu: '<span>Afficher:</span> _MENU_',
+		            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+		        }
+		    });
+
+		    // Column selectors
+		    $('#myTable2').DataTable({
+				ajax:{
+					"url": "./data/produits.txt",
+					"dataSrc" : ""
+				},
+				columns : [
+					{"data": "vide"},
+					{"data": "ref" },
+					{"data":"marque"},
+                    {"data":"ean"}
+				],
+		        lengthMenu: [[50, 100, -1], [50, 100, "All"]],
+		        language: {
+		            search: '<span>Filtre:</span> _INPUT_',
+		            searchPlaceholder: 'Tapez pour filter...',
+		            lengthMenu: '<span>Afficher:</span> _MENU_',
+		            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+		        },
+		        colReorder: true,
+		        rowReoder: true,
+		        stateSave: true,
+		        realtime: true,
+		        //select: true,
+		        //================================
+		        columnDefs: [
+		            {
+		                orderable: false,
+		                className: 'select-checkbox',
+		                targets: 0
+		            }
+		        ],
+		        select: {
+		            style: 'os',
+		            selector: 'td:first-child',
+		            style: 'multi'
+		        },
+		        order: [[1, 'asc']],
+		        //================================
+		        buttons: {
+		            buttons: [
+		                {extend: 'selectAll', className: 'btn bg-blue',text: 'Tout cocher'},
+		                {extend: 'selectNone', className: 'btn bg-blue',text: 'Tout décocher'},
+		                {
+		                    extend: 'colvisGroup',
+		                    className: 'btn btn-default',
+		                    text: 'Afficher tout',
+		                    show: ':hidden'
+		                },
+		                {
+		                    extend: 'colvisGroup',
+		                    text: 'Masquer les colonnes à ne pas exporter',
+		                    className: 'btn btn-default',
+		                    hide: [0, 9, 10]
+		                },
+		                {
+		                    extend: 'csvHtml5',
+		                    header: true,
+		                    className: 'btn bg-slate',
+		                    text: 'Exporter la vue',
+		                    fieldSeparator:';',
+		                    extension: '.csv',
+							charset: 'utf-8',
+							fieldBoundary: '',
+							bom: true,
+		                    exportOptions: {
+		                        columns: ':visible'
+		                    }
+		                },
+		                {
+		                    extend: 'csvHtml5',
+		                    header: true,
+		                    className: 'btn bg-slate',
+		                    text: 'Exporter la selection',
+		                    fieldSeparator:';',
+		                    extension: '.csv',
+		                    charset: 'utf-8',
+							fieldBoundary: '',
+							bom: true,
+		                    exportOptions: {
+		                        columns: ':visible',
+		                        modifier: {
+		                            selected: true
+		                        }
+		                    }
+		                },
+		                {
+		                    extend: 'colvis',
+		                    text: '<i class="icon-three-bars"></i> <span class="caret"></span>',
+		                    className: 'btn bg-blue btn-icon'
+		                }
+		            ]
+		        },
+		    });
+		});
+        */
     </script>
     <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>

@@ -70,6 +70,11 @@ class Upload
     private $isMedia = false;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isGoogleShopping = false;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdAt;
@@ -153,6 +158,18 @@ class Upload
     public function setIsMedia(?bool $isMedia): self
     {
         $this->isMedia = $isMedia;
+
+        return $this;
+    }
+
+    public function getIsGoogleShopping(): ?bool
+    {
+        return $this->isGoogleShopping;
+    }
+
+    public function setIsGoogleShopping(?bool $isGoogleShopping): self
+    {
+        $this->isGoogleShopping = $isGoogleShopping;
 
         return $this;
     }

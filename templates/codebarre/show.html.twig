@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Export tarif -
+    {{fournisseur.code is defined ? fournisseur.code : ''}}
+{% endblock %}
+{% set currentPage = fournisseur.code is defined ? "Export tarif / " ~ fournisseur.code : "Export tarif" %}
+
+{% block body %}
+    {% embed "main_layout.html.twig" %}
+        {% block header %}
+            {% include 'shared/header.html.twig' %}
+        {% endblock %}
+        {% block sidebar %}
+            {% include 'shared/sidebar.html.twig' %}
+        {% endblock %}
+        {% block footer %}
+            {% include 'shared/footer.html.twig' %}
+        {% endblock %}
+        {% block content %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <h4 class="panel-title col-sm-10">Export tarif -
+                            {{fournisseur.code is defined ? fournisseur.code : 'Aucun fournisseur choisit'}}</h4>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {{ form_start(form, {'attr':{'class':'form-horizontal'}}) }}
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {{ form_widget(form.selectedFr, {'attr':{'class':'form-control input-xlg border-info'}}) }}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-info" type="submit">
+                                        <i class="icon-search4"></i>
+                                        Valider</button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                            {{form_end(form)}}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table classicDatatable">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Marque</th>
+                                    <th>Date MAJ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if fournisseur is defined %}
+                                    {% for article in articles %}
+                                        <tr class="no-margin no-padding">
+                                            <td>{{article.item}}</td>
+                                            <td>{{ article.marque }}</td>
+                                            <td>{{ article.updatedAt is defined ? article.updatedAt|date('d/m/Y') : article.createdAt|date('d/m/Y') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/pages/datatables_extension_buttons_html5.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/col_reorder.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/tables/datatables/extensions/select.min.js') }}"></script>
+
+{% endblock %}
